@@ -10,27 +10,35 @@ void Utils::heapsort(std::vector<Vertex*>* vec, int n) {
         // Move current root to end
         swap((*vec)[0], (*vec)[i]);
 
-        // call min heapify on the reduced heap
+        // call max heapify on the reduced heap
         Utils::heapify(vec, i, 0);
     }
 }
 
 void Utils::heapify(std::vector<Vertex*>* vec, int n, int i) {
-    int i_smallest = i;
-    int left_child = 2*i_smallest + 1;
-    int right_child = 2*i_smallest + 2;
+    int i_largest = i;
+    int left_child = 2*i_largest + 1;
+    int right_child = 2*i_largest + 2;
 
-    if (left_child < n && (*vec)[left_child]->getY() > (*vec)[i_smallest]->getY()) {
-        i_smallest = left_child;
+    if (left_child < n && (*vec)[left_child]->getY() > (*vec)[i_largest]->getY()) {
+        i_largest = left_child;
+    }
+    // If y coordinate is the same then first should be the point that is the furthest in the x axis
+    // Thus, since we will be "reversing the heap" the element that has the lowest x coord should be higher on the heap
+    else if (left_child < n && (*vec)[left_child]->getY() == (*vec)[i_largest]->getY() && (*vec)[left_child]->getX() < (*vec)[i_largest]->getX()) {
+        i_largest = left_child;
     }
 
-    if (right_child < n && (*vec)[right_child]->getY() > (*vec)[i_smallest]->getY()) {
-        i_smallest = right_child;
+    if (right_child < n && (*vec)[right_child]->getY() > (*vec)[i_largest]->getY()) {
+        i_largest = right_child;
+    }
+    else if (right_child < n && (*vec)[right_child]->getY() == (*vec)[i_largest]->getY() && (*vec)[right_child]->getX() < (*vec)[i_largest]->getX()) {
+        i_largest = right_child;
     }
 
-    if (i_smallest != i) {
-        Utils::swap((*vec)[i_smallest], (*vec)[i]);
-        heapify(vec, n, i_smallest);
+    if (i_largest != i) {
+        Utils::swap((*vec)[i_largest], (*vec)[i]);
+        heapify(vec, n, i_largest);
     }
 
 }
