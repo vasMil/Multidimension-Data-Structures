@@ -8,4 +8,8 @@ class Vertex {
     public:
         Vertex(double x, double y);
         void print();
+
+        double getX();
+        double getY();
+        void updateValues(Vertex v);
 };

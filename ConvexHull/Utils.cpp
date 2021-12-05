@@ -1,5 +1,47 @@
 #include "Utils.h"
 
+void Utils::heapsort(std::vector<Vertex*>* vec, int n) {
+    int i = 0;
+    for (i = n/2 -1; i >= 0; i--) {
+        Utils::heapify(vec, n, i);
+    }
+
+    for (int i = n - 1; i > 0; i--) {
+        // Move current root to end
+        swap((*vec)[0], (*vec)[i]);
+
+        // call min heapify on the reduced heap
+        Utils::heapify(vec, i, 0);
+    }
+}
+
+void Utils::heapify(std::vector<Vertex*>* vec, int n, int i) {
+    int i_smallest = i;
+    int left_child = 2*i_smallest + 1;
+    int right_child = 2*i_smallest + 2;
+
+    if (left_child < n && (*vec)[left_child]->getY() > (*vec)[i_smallest]->getY()) {
+        i_smallest = left_child;
+    }
+
+    if (right_child < n && (*vec)[right_child]->getY() > (*vec)[i_smallest]->getY()) {
+        i_smallest = right_child;
+    }
+
+    if (i_smallest != i) {
+        Utils::swap((*vec)[i_smallest], (*vec)[i]);
+        heapify(vec, n, i_smallest);
+    }
+
+}
+
+
+void Utils::swap(Vertex* i, Vertex* j) {
+    Vertex temp = *i;
+    i->updateValues(*j);
+    j->updateValues(temp);
+}
+
 std::vector<Vertex*> Utils::VertexFactory(int numOfVertices, unsigned int upperx, unsigned int lowerx, unsigned int uppery, unsigned int lowery) {
     std::vector<Vertex*> randomVertices(numOfVertices);
     for (int i = 0; i < numOfVertices; i++) {
