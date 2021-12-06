@@ -1,9 +1,23 @@
 #include "Utils.h"
 
-void Utils::heapsort(std::vector<Vertex*>* vec, int n) {
+void Utils::prepareVector(std::vector<Vertex*>* vec) {
+    int miny_index = Utils::getMinYVertex(vec);
+    Vertex* miny = (*vec)[miny_index];
+    vec->erase(vec->begin() + miny_index);
+    Utils::heapsort(vec, vec->size(), miny);
+    vec->insert(vec->begin(), miny);
+}
+
+int Utils::isCounterClockwiseTurn(Vertex v1, Vertex v2, Vertex v3) {
+    double outter = (v2.getX() - v1.getX())*(v3.getY() - v1.getY()) - (v3.getX() - v1.getX())*(v2.getY() - v1.getY());
+    if (outter == 0) return 0;
+    return outter > 0 ? 1 : -1;
+}
+
+void Utils::heapsort(std::vector<Vertex*>* vec, int n, Vertex* miny) {
     int i = 0;
     for (i = n/2 -1; i >= 0; i--) {
-        Utils::heapify(vec, n, i);
+        Utils::heapify(vec, n, i, miny);
     }
 
     for (int i = n - 1; i > 0; i--) {
@@ -11,34 +25,32 @@ void Utils::heapsort(std::vector<Vertex*>* vec, int n) {
         swap((*vec)[0], (*vec)[i]);
 
         // call max heapify on the reduced heap
-        Utils::heapify(vec, i, 0);
+        Utils::heapify(vec, i, 0, miny);
     }
 }
 
-void Utils::heapify(std::vector<Vertex*>* vec, int n, int i) {
+void Utils::heapify(std::vector<Vertex*>* vec, int n, int i, Vertex* miny) {
     int i_largest = i;
     int left_child = 2*i_largest + 1;
     int right_child = 2*i_largest + 2;
 
-    if (left_child < n && (*vec)[left_child]->getY() > (*vec)[i_largest]->getY()) {
+    if (left_child < n && Utils::isCounterClockwiseTurn(*miny, *(*vec)[i_largest], *(*vec)[left_child]) == 1) {
         i_largest = left_child;
     }
-    // If y coordinate is the same then first should be the point that is the furthest in the x axis
-    // Thus, since we will be "reversing the heap" the element that has the lowest x coord should be higher on the heap
-    else if (left_child < n && (*vec)[left_child]->getY() == (*vec)[i_largest]->getY() && (*vec)[left_child]->getX() < (*vec)[i_largest]->getX()) {
+    else if (left_child < n && Utils::isCounterClockwiseTurn(*miny, *(*vec)[i_largest], *(*vec)[left_child]) == 0 && (*vec)[i_largest]->getX() < (*vec)[left_child]->getX()) {
         i_largest = left_child;
     }
 
-    if (right_child < n && (*vec)[right_child]->getY() > (*vec)[i_largest]->getY()) {
+    if (right_child < n && Utils::isCounterClockwiseTurn(*miny, *(*vec)[i_largest], *(*vec)[right_child]) == 1) {
         i_largest = right_child;
     }
-    else if (right_child < n && (*vec)[right_child]->getY() == (*vec)[i_largest]->getY() && (*vec)[right_child]->getX() < (*vec)[i_largest]->getX()) {
+    else if (right_child < n && Utils::isCounterClockwiseTurn(*miny, *(*vec)[i_largest], *(*vec)[right_child]) == 0 && (*vec)[i_largest]->getX() < (*vec)[right_child]->getX()) {
         i_largest = right_child;
     }
 
     if (i_largest != i) {
         Utils::swap((*vec)[i_largest], (*vec)[i]);
-        heapify(vec, n, i_largest);
+        heapify(vec, n, i_largest, miny);
     }
 
 }
@@ -48,6 +60,19 @@ void Utils::swap(Vertex* i, Vertex* j) {
     Vertex temp = *i;
     i->updateValues(*j);
     j->updateValues(temp);
+}
+
+int Utils::getMinYVertex(std::vector<Vertex*>* vec) {
+    int miny = 0;
+    for(long unsigned int i = 1; i < vec->size(); i++) {
+        if((*vec)[miny]->getY() > (*vec)[i]->getY()) {
+            miny = i;
+        }
+        else if ((*vec)[miny]->getY() == (*vec)[i]->getY() && (*vec)[miny]->getX() > (*vec)[i]->getX()) {
+            miny = i;
+        }
+    }
+    return miny;
 }
 
 std::vector<Vertex*> Utils::VertexFactory(int numOfVertices, unsigned int upperx, unsigned int lowerx, unsigned int uppery, unsigned int lowery) {

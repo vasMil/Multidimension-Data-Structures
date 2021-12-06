@@ -9,7 +9,7 @@ CFLAGS  = -g -Wall
 all: ConvexHull
 
 ConvexHull: ConvexHull.cpp 
-			$(CC) $(CFLAGS) -o ConvexHull ConvexHull.cpp Utils.cpp Vertex.cpp
+			$(CC) $(CFLAGS) -o ConvexHull ConvexHull.cpp Utils.cpp Vertex.cpp tests/test.cpp
 
 clean:
 			rm ConvexHull; clear
