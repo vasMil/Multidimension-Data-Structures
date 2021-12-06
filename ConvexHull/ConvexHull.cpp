@@ -1,7 +1,7 @@
 #include "Utils.h"
 #include "tests/test.h"
 
-#define NUMBER_OF_POINTS 6
+#define NUMBER_OF_POINTS 10
 
 std::vector<Vertex*> convexHull(std::vector<Vertex*> setOfPoints) {
     std::vector<Vertex*> stack;
@@ -12,7 +12,7 @@ std::vector<Vertex*> convexHull(std::vector<Vertex*> setOfPoints) {
         if(stack.size() < 3) {
             continue;
         }
-        if(Utils::isCounterClockwiseTurn(*stack[stack.size()-3], *stack[stack.size()-2], *stack[stack.size()-1]) == -1) {
+        while (stack.size() >= 3 && Utils::isCounterClockwiseTurn(*stack[stack.size()-3], *stack[stack.size()-2], *stack[stack.size()-1]) == -1) {
             Vertex* temp = stack[stack.size() - 1];
             stack.pop_back();
             stack.pop_back();
@@ -32,12 +32,16 @@ int main(int argc, char* argv[]) {
     // GET POINTS
     // std::vector<Vertex*> randomVertices = Utils::VertexFactory(NUMBER_OF_POINTS, 10, 0, 10, 0);
     std::vector<Vertex*> randomVertices;
-    randomVertices.push_back(new Vertex(4.94429, 0.589626));
-    randomVertices.push_back(new Vertex(3.89969, 4.1896));
-    randomVertices.push_back(new Vertex(2.59867, 4.3064));
-    randomVertices.push_back(new Vertex(9.08766, 6.18744));
-    randomVertices.push_back(new Vertex(2.02912, 7.82354));
-    randomVertices.push_back(new Vertex(9.4, 2.5));
+    randomVertices.push_back(new Vertex(9.44693,0.202048));
+    randomVertices.push_back(new Vertex(5.4885,0.253926));
+    randomVertices.push_back(new Vertex(5.78466,0.667729));
+    randomVertices.push_back(new Vertex(3.84022,0.149183));
+    randomVertices.push_back(new Vertex(5.59016,2.64943));
+    randomVertices.push_back(new Vertex(5.85213,5.40099));
+    randomVertices.push_back(new Vertex(4.9771,4.727));
+    randomVertices.push_back(new Vertex(4.54326,3.22961));
+    randomVertices.push_back(new Vertex(2.52438,8.9872));
+    randomVertices.push_back(new Vertex(0.555006,4.93006));
 
     // PRINT THE POINTS YOU ARE WORKING WITH
     for (int i = 0; i < NUMBER_OF_POINTS; i++) {
@@ -55,6 +59,11 @@ int main(int argc, char* argv[]) {
         stack[i]->print();
     }
     std::cout << "End" << std::endl;
+
+    // temp
+    for(int i = 0; i < NUMBER_OF_POINTS; i++) {
+        std::cout << "(" << randomVertices[i]->getX() << "," << randomVertices[i]->getY() << ")" << std::endl;
+    }
 
     // CLEANUP
     for (int i = 0; i < NUMBER_OF_POINTS; i++) {
