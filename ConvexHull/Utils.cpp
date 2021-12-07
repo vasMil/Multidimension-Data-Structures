@@ -75,7 +75,7 @@ int Utils::getMinYVertex(std::vector<Vertex*>* vec) {
     return miny;
 }
 
-std::vector<Vertex*> Utils::VertexFactory(int numOfVertices, unsigned int upperx, unsigned int lowerx, unsigned int uppery, unsigned int lowery) {
+std::vector<Vertex*> Utils::VertexFactory(int numOfVertices, double upperx, double lowerx, double uppery, double lowery) {
     std::vector<Vertex*> randomVertices(numOfVertices);
     for (int i = 0; i < numOfVertices; i++) {
         randomVertices[i] = new Vertex(Utils::randomDoubleGenerator(upperx, lowerx), Utils::randomDoubleGenerator(uppery, lowery));
@@ -84,7 +84,7 @@ std::vector<Vertex*> Utils::VertexFactory(int numOfVertices, unsigned int upperx
 }
 
 
-double Utils::randomDoubleGenerator(int upper, int lower) {
+double Utils::randomDoubleGenerator(double upper, double lower) {
     uint32_t seed_val = 0; // Declare value to store data into
     size_t size = sizeof(seed_val); // Declare size of data
     

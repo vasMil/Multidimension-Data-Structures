@@ -9,12 +9,12 @@
 #include "Vertex.h"
 
 namespace Utils {
-    double randomDoubleGenerator(int upper, int lower);
+    double randomDoubleGenerator(double upper, double lower);
 
     // function that given the number of vertices required
     // will return a vector of pointers to vertices with random x,y.
     // The values of the Vertices created will be in the range defined as [loweri,upperi], where i e {x,y} 
-    std::vector<Vertex*> VertexFactory(int numOfVertices, unsigned int upperx, unsigned int lowerx, unsigned int uppery, unsigned int lowery);
+    std::vector<Vertex*> VertexFactory(int numOfVertices, double upperx, double lowerx, double uppery, double lowery);
 
     void heapsort(std::vector<Vertex*>* vec, int n, Vertex* miny);
 
