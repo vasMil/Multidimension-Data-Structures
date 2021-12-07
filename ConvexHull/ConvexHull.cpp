@@ -1,7 +1,13 @@
 #include "Utils.h"
 #include "tests/test.h"
+#include "OpenGL/opengl.h"
 
 #define NUMBER_OF_POINTS 10
+
+#define X_UPPER_BOUND 20.0
+#define X_LOWER_BOUND -20.0
+#define Y_UPPER_BOUND 20.0
+#define Y_LOWER_BOUND -20.0
 
 std::vector<Vertex*> convexHull(std::vector<Vertex*> setOfPoints) {
     std::vector<Vertex*> stack;
@@ -23,52 +29,23 @@ std::vector<Vertex*> convexHull(std::vector<Vertex*> setOfPoints) {
 }
 
 int main(int argc, char* argv[]) {
-    // TESTS
-    std::cout << "Running Tests!" << std::endl;
-    test::heapsort();
-    test::isCounterClockwise();
-    std::cout << "\nTests Finished!\n" << std::endl;
 
     // GET POINTS
-    // std::vector<Vertex*> randomVertices = Utils::VertexFactory(NUMBER_OF_POINTS, 10, 0, 10, 0);
-    std::vector<Vertex*> randomVertices;
-    randomVertices.push_back(new Vertex(9.44693,0.202048));
-    randomVertices.push_back(new Vertex(5.4885,0.253926));
-    randomVertices.push_back(new Vertex(5.78466,0.667729));
-    randomVertices.push_back(new Vertex(3.84022,0.149183));
-    randomVertices.push_back(new Vertex(5.59016,2.64943));
-    randomVertices.push_back(new Vertex(5.85213,5.40099));
-    randomVertices.push_back(new Vertex(4.9771,4.727));
-    randomVertices.push_back(new Vertex(4.54326,3.22961));
-    randomVertices.push_back(new Vertex(2.52438,8.9872));
-    randomVertices.push_back(new Vertex(0.555006,4.93006));
+    std::vector<Vertex*> randomVertices = Utils::VertexFactory(NUMBER_OF_POINTS, X_UPPER_BOUND, X_LOWER_BOUND, Y_UPPER_BOUND, Y_LOWER_BOUND);
 
-    // PRINT THE POINTS YOU ARE WORKING WITH
-    for (int i = 0; i < NUMBER_OF_POINTS; i++) {
-        std::cout << i << ". ";
-        randomVertices[i]->print();
-    }
+    // OpenGL INIT
+    GLFWwindow* window = opengl::initOpenGL();
 
     // CALCULATE THE CONVEX HULL
     std::vector<Vertex*> stack = convexHull(randomVertices);
 
-    // PRINT VERTICES THAT DEFINE THE CONVEX HULL
-    std::cout << "Convex Hull Points: " << std::endl;
-    for (long unsigned int i = 0; i < stack.size(); i++) {
-        std::cout << i << ". ";
-        stack[i]->print();
-    }
-    std::cout << "End" << std::endl;
+    opengl::drawGraph(window, &randomVertices, &stack, 1);
 
-    // temp
-    for(int i = 0; i < NUMBER_OF_POINTS; i++) {
-        std::cout << "(" << randomVertices[i]->getX() << "," << randomVertices[i]->getY() << ")" << std::endl;
-    }
+    // OpenGL TERMINATE
+    opengl::terminateOpenGL(window);
 
     // CLEANUP
     for (int i = 0; i < NUMBER_OF_POINTS; i++) {
-        std::cout << i << ". ";
-        randomVertices[i]->print();
         delete randomVertices[i];
     }
 }
