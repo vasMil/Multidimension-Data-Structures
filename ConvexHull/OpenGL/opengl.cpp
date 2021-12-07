@@ -27,6 +27,13 @@ void opengl::terminateOpenGL(GLFWwindow* window) {
     glfwTerminate( ); // frees window* aswell
 }
 
+void opengl::vec2arrayMapper(std::vector<Vertex>* vec, GLfloat* arr) {
+    for (unsigned long int i = 0; i < vec->size(); i++) {
+        arr[2*i] = (*vec)[i].getX();
+        arr[2*i+1] = (*vec)[i].getY();
+    }
+}
+
 void opengl::vec2arrayMapper(std::vector<Vertex*>* vec, GLfloat* arr) {
     for (unsigned long int i = 0; i < vec->size(); i++) {
         arr[2*i] = (*vec)[i]->getX();
@@ -34,7 +41,7 @@ void opengl::vec2arrayMapper(std::vector<Vertex*>* vec, GLfloat* arr) {
     }
 }
 
-void opengl::drawGraph(GLFWwindow* window, std::vector<Vertex*>* vertices, std::vector<Vertex*>* edges, bool isLoop) {
+void opengl::drawGraph(GLFWwindow* window, std::vector<Vertex>* vertices, std::vector<Vertex*>* edges, bool isLoop) {
     // Calculate the size of the arrays that you will map into
     int numOfVert = vertices->size();
     int numOfEdges = edges->size();

@@ -14,6 +14,7 @@
 namespace opengl {
     GLFWwindow* initOpenGL();
     void terminateOpenGL(GLFWwindow* window);
+    void vec2arrayMapper(std::vector<Vertex>* vec, GLfloat* arr);
     void vec2arrayMapper(std::vector<Vertex*>* vec, GLfloat* arr);
-    void drawGraph(GLFWwindow* window, std::vector<Vertex*> vertices[], std::vector<Vertex*> edges[], bool isLoop);
+    void drawGraph(GLFWwindow* window, std::vector<Vertex> vertices[], std::vector<Vertex*> edges[], bool isLoop);
 }
