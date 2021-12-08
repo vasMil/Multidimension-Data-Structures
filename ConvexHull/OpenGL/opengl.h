@@ -1,6 +1,5 @@
 #include "../Utils.h"
 #include <chrono>
-#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #define SCREEN_WIDTH 1280
