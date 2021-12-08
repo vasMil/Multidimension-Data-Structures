@@ -1,7 +1,6 @@
 #include "opengl.h"
 
 void opengl::drawStepConvHull(GLFWwindow* window, std::vector<Vertex>* setOfPoints, int numberOfPoints) {
-    int cnt = 0;
     Utils::prepareVector(setOfPoints);
     std::vector<Vertex*>* stack = new std::vector<Vertex*>();
     for (int i = 0; i < numberOfPoints; i++) {
