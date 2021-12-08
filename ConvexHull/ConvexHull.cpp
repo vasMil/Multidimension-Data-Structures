@@ -3,8 +3,10 @@
 #include "OpenGL/opengl.h"
 
 #define TEST 0
+#define DRAW 1
+#define DRAW_STEPS 1
 
-#define NUMBER_OF_POINTS 10
+#define NUMBER_OF_POINTS 100
 
 #define X_UPPER_BOUND 20.0
 #define X_LOWER_BOUND -20.0
@@ -39,17 +41,25 @@ int main(int argc, char* argv[]) {
     // GET POINTS
     std::vector<Vertex>* randomVertices = Utils::VertexFactory(NUMBER_OF_POINTS, X_UPPER_BOUND, X_LOWER_BOUND, Y_UPPER_BOUND, Y_LOWER_BOUND);
 
+#if DRAW || DRAW_STEPS
     // OpenGL INIT
     GLFWwindow* window = opengl::initOpenGL();
+#endif
 
     // CALCULATE THE CONVEX HULL
     std::vector<Vertex*>* stack = convexHull(randomVertices);
 
     // DRAW
+#if DRAW && !DRAW_STEPS
     opengl::drawGraph(window, randomVertices, stack, 1);
+#elif DRAW_STEPS
+    opengl::drawStepConvHull(window, randomVertices, NUMBER_OF_POINTS);
+#endif
 
+#if DRAW || DRAW_STEPS
     // OpenGL TERMINATE
     opengl::terminateOpenGL(window);
+#endif
 
     // CLEANUP
     delete stack; // The pointers that it holds point to randomVertices vector

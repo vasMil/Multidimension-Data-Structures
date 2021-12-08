@@ -1,15 +1,15 @@
 #include "../Utils.h"
-#include <unistd.h>
+#include <chrono>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 640
 
 #define X_AXIS 20
 #define Y_AXIS 20
 
-#define SLEEP_INTERVAL_IN_MICRO 500000
+#define SLEEP_INTERVAL_IN_MILLI 500
 
 namespace opengl {
     GLFWwindow* initOpenGL();
@@ -17,4 +17,6 @@ namespace opengl {
     void vec2arrayMapper(std::vector<Vertex>* vec, GLfloat* arr);
     void vec2arrayMapper(std::vector<Vertex*>* vec, GLfloat* arr);
     void drawGraph(GLFWwindow* window, std::vector<Vertex> vertices[], std::vector<Vertex*> edges[], bool isLoop);
+    void stepConvHull(std::vector<Vertex>* setOfPoints, std::vector<Vertex*>* stack, int* iter);
+    void drawStepConvHull(GLFWwindow* window, std::vector<Vertex>* setOfPoints, int numberOfPoints);
 }

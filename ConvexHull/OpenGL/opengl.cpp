@@ -1,5 +1,38 @@
 #include "opengl.h"
 
+void opengl::drawStepConvHull(GLFWwindow* window, std::vector<Vertex>* setOfPoints, int numberOfPoints) {
+    int cnt = 0;
+    Utils::prepareVector(setOfPoints);
+    std::vector<Vertex*>* stack = new std::vector<Vertex*>();
+    for (int i = 0; i < numberOfPoints; i++) {
+        opengl::stepConvHull(setOfPoints, stack, &i);
+        opengl::drawGraph(window, setOfPoints, stack, 0);
+
+        auto t_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now());
+        std::chrono::milliseconds dt_ms(SLEEP_INTERVAL_IN_MILLI);
+        while (t_ms + dt_ms > std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now())) {
+            if(glfwWindowShouldClose( window ))
+                return;
+            glfwPollEvents();
+        }
+    }
+    opengl::drawGraph(window, setOfPoints, stack, 1);
+    delete stack;
+}
+
+void opengl::stepConvHull(std::vector<Vertex>* setOfPoints, std::vector<Vertex*>* stack, int* iter) {
+    if (stack->size() < 3) {
+        stack->push_back(&(*setOfPoints)[*iter]);
+    }
+    else if (Utils::isCounterClockwiseTurn(*(*stack)[stack->size()-3], *(*stack)[stack->size()-2], *(*stack)[stack->size()-1]) == -1) {
+        stack->erase(stack->end() - 2);
+        (*iter)--;
+    }
+    else {
+        stack->push_back(&(*setOfPoints)[*iter]);
+    }
+}
+
 GLFWwindow* opengl::initOpenGL() {
     GLFWwindow* window = (GLFWwindow*)malloc(sizeof(GLFWwindow*));
     
