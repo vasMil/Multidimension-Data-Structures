@@ -20,6 +20,9 @@ class Event:
             return True
         return False
 
+    def __repr__(self):
+        return self.point.toString()
+
     def appendUpperPoint(self, segment):
         self.upperPointArr.append(segment)
 

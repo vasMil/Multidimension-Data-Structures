@@ -22,6 +22,9 @@ class Point:
             return True
         return False
 
+    def __repr__(self):
+        return self.toString()
+
     def toString(self):
         return '(' + str(self.x) + ',' + str(self.y) + ')'
 
