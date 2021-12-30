@@ -3,7 +3,7 @@ class Event:
         self.point = point
         self.upperPointArr = []
         self.lowerPointArr = []
-        self.LiesInsideArr = []
+        self.liesInsideArr = []
 
     def __gt__(self, other):
         if (self.point > other.point):
@@ -27,4 +27,4 @@ class Event:
         self.lowerPointArr.append(segment)
 
     def appendLiesInside(self, segment):
-        self.LiesInsideArr.append(segment)
+        self.liesInsideArr.append(segment)
