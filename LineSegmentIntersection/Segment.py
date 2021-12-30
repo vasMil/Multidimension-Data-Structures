@@ -4,16 +4,10 @@ class Segment:
         self.pt2 = pt2;
 
     def getLowerPriorityPoint(self):
-        if (self.pt1.y < self.pt2.y):
-            return self.pt1
-        elif (self.pt1.y == self.pt2.y):
-            return self.pt1.x > self.pt2.x if self.pt1 else self.pt2
+        return self.pt1 < self.pt2 if self.pt1 else self.pt2
 
     def getHigherPriorityPoint(self):
-        if (self.pt1.y > self.pt2.y):
-            return self.pt1
-        elif (self.pt1.y == self.pt2.y):
-            return self.pt1.x < self.pt2.x if self.pt1 else self.pt2
+        return self.pt1 > self.pt2 if self.pt1 else self.pt2
 
     def toString(self):
         return '{' + self.pt1.toString() + ', ' + self.pt2.toString() + '}'
