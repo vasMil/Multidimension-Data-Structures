@@ -1,11 +1,14 @@
 from utils import segmentFactory
-from bintrees import AVLTree
+from Event import Event
+from avlTree.AVLTree import AVLTree
 
-segments = segmentFactory(0,100,0,100,5, 0)
+
+
+segments = segmentFactory(0,100,0,100,50, 0)
 Q = AVLTree()
 for i in range(0,len(segments)):
-    segments[i].print()
-    Q.insert(segments[i].pt1,i)
-    Q.insert(segments[i].pt2,2*i-1)
+    Q.insert(Event(segments[i].pt1))
+    Q.insert(Event(segments[i].pt2))
 
-print(Q.max_item())
+Q.inOrder(Q.root)
+
