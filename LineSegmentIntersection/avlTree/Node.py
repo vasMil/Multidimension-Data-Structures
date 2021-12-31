@@ -5,16 +5,16 @@ class Node:
         self.rightChild = None
         self.height = 1
 
-    def getHeight(self):
+    def updateHeight(self):
         if not self.leftChild and not self.rightChild:
             self.height = 1
         elif not self.leftChild:
-            self.height = 1 + self.rightChild.getHeight()
+            self.height = 1 + self.rightChild.height
         elif not self.rightChild:
-            self.height = 1 + self. leftChild.getHeight()
+            self.height = 1 + self.leftChild.height
         else:
-            self.height = 1 + max(self.leftChild.getHeight(),
-                                  self.rightChild.getHeight())
+            self.height = 1 + max(self.leftChild.height,
+                                  self.rightChild.height)
 
         return self.height
 
@@ -23,8 +23,8 @@ class Node:
         if not self.leftChild and not self.rightChild:
             return 0
         elif not self.leftChild:
-            return - self.rightChild.getHeight()
+            return - self.rightChild.height
         elif not self.rightChild:
-            return self.leftChild.getHeight()
+            return self.leftChild.height
         else:
-            return self.leftChild.getHeight() - self.rightChild.getHeight()
+            return self.leftChild.height - self.rightChild.height
