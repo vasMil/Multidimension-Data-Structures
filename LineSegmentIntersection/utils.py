@@ -1,6 +1,6 @@
 import random
-from Point import Point
-from Segment import Segment
+from model.Point import Point
+from model.Segment import Segment
 
 def segmentFactory(minx,maxx,miny,maxy, numOfSegments, round_n_digits = 2):
     segments = [Segment(Point(0,0),Point(0,0))] * numOfSegments
