@@ -56,3 +56,9 @@ for i in range(0,len(segments)):
 #     Q.delete(data)
 #     print("Test tree after deleting " + str(data))
 #     Q.inOrderPrint()
+
+# Debug popSmallest, popLargest
+# traver = Q.inOrder()
+# print(Q.popLargest().toString())
+# print(Q.popSmallest().toString())
+# print()
