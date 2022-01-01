@@ -79,9 +79,45 @@ class AVLTree:
             path.append(curNode)
             if(data < curNode.data):
                 curNode = curNode.leftChild
-            else:
+            elif(data > curNode.data):
                 curNode = curNode.rightChild
+            else:
+                break
         return path
+
+
+    def getSuccessor(self, data):
+        path = self.searchPath(data)
+        if not path:
+            return None
+        i = len(path) - 1
+        if path[i].rightChild:
+            succ = path[i].rightChild
+            while succ.leftChild:
+                succ = succ.leftChild
+            return succ
+        elif len(path) > 1:
+            while i > 0:
+                if path[i-1].data > path[i].data:
+                    return path[i-1]
+                i -= 1
+        return None
+
+
+    def getPredeccessor(self, data):
+        path = self.searchPath(data)
+        if not path:
+            return None
+        i = len(path) - 1
+        if path[i].leftChild:
+            pred = path[i].leftChild
+            while pred.rightChild:
+                pred = pred.rightChild
+            return pred
+        while path[i].data < path[i-1].data:
+            i -= 1
+            if i == 0: return None
+        return path[i-1]
 
 
     def inOrder(self):
