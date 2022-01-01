@@ -21,7 +21,7 @@ class Event:
         return False
 
     def __repr__(self):
-        return self.point.toString()
+        return self.toString()
 
     def appendUpperPoint(self, segment):
         self.upperPointArr.append(segment)
@@ -31,3 +31,6 @@ class Event:
 
     def appendLiesInside(self, segment):
         self.liesInsideArr.append(segment)
+
+    def toString(self):
+        return self.point.toString()

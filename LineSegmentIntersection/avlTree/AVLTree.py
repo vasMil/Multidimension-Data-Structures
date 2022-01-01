@@ -2,36 +2,134 @@ from .Node import Node
 
 class AVLTree:
     def __init__(self, root = None):
-        self.root = root
+        if root:
+            self.root = Node(root)
+        else:
+            self.root = None
 
 
     def insert(self, data):
+        # Find the path to the node with node.data closest to data
         path = self.searchPath(data)
         if not path:
+            # There is no root to start my search from - assign data to a Node and that noda as the root of my tree
             self.root = Node(data)
             return
+        # Decide whether the new node should be the rightChild or the leftChild of it's parent
         parent = path.pop()
-        if(data < parent.data):
+        if data < parent.data:
             parent.leftChild = Node(data)
         else:
             parent.rightChild = Node(data)
-
+        # Update the height of it's parent
         parent.updateHeight()
 
-        # Balance
+        # Balance path - starting from bottom to root
         for i in reversed(range(0,len(path))):
             curNode = path[i]
             if curNode.getBalance() > 1 or curNode.getBalance() < -1:
+                # Should only get here once
                 if i - 1 < 0:
+                    # Only one element left in path (and that is the root). Balance it
                     self.root = self.getTreeBalanced(curNode)
-                elif (path[i].data < path[i-1].data):
+                elif path[i].data < path[i-1].data:
+                    # curNode is the leftChild of it's parent
                     path[i-1].leftChild = self.getTreeBalanced(curNode)
                 else:
+                    # curNode is the rightChild of it's parent
                     path[i-1].rightChild = self.getTreeBalanced(curNode)
             else:
+                # It is balanced, update curNode.height, since the height of one of it's children changed,
+                # it's height might have also changed
                 curNode.updateHeight()
 
 
+    def delete(self, data):
+        # find node containing data
+        path = self.searchPath(data)
+        if not path: return
+
+        node = path.pop()
+        # Attempting to require as little operator overloads as possible
+        if not(node.data == data):
+            # Could not find data
+            return
+
+        # Handle special case of root (has no parent to pop())
+        if node == self.root:
+            if node.numOfChildren() == 0:
+                if node == self.root:
+                    self.root = None
+            elif node.numOfChildren() == 1:
+                if node.leftChild:
+                    self.root = node.leftChild
+                else:
+                    self.root = node.rightChild
+            else:
+                successor = self.getSuccessor(node.data)
+                self.delete(successor.data)
+                successor.leftChild = self.root.leftChild
+                successor.rightChild = self.root.rightChild
+                self.root = successor
+            return
+
+
+        parent = path.pop()
+        if node.numOfChildren() == 0:
+            # Just remove the node
+            if node.data < parent.data:
+                parent.leftChild = None
+            else:
+                parent.rightChild = None
+
+        elif node.numOfChildren() == 1:
+            # Replace the node being removed with it's child
+            if node.data < parent.data:
+                # node is the leftChild of it's parent
+                if node.rightChild:
+                    # node has a rightChild
+                    parent.leftChild = node.rightChild
+                else:
+                    # node has a leftChild
+                    parent.leftChild = node.leftChild
+            else:
+                # node is the rightChild of it's parent
+                if node.rightChild:
+                    # node has a rightChild
+                    parent.rightChild = node.rightChild
+                else:
+                    # node has a leftChild
+                    parent.rightChild = node.leftChild
+
+        else:
+            # Successor is the leftmost leaf of node's right child
+            successor = self.getSuccessor(node.data)
+            self.delete(successor.data)
+            # Reattach node's left and right branches
+            successor.leftChild = node.leftChild
+            successor.rightChild = node.rightChild
+            if node.data < parent.data:
+                parent.leftChild = successor
+            else:
+                parent.rightChild = successor
+            successor.updateHeight()
+
+
+        # Rebalance path to root - same for all cases
+        curNode = parent
+        while path:
+            curNode.updateHeight()
+            curNode = parent
+            parent = path.pop()
+            if curNode.data < parent.data:
+                parent.leftChild = self.getTreeBalanced(curNode)
+            else:
+                parent.rightChild = self.getTreeBalanced(curNode)
+        self.root = self.getTreeBalanced(self.root)
+        self.root.updateHeight()
+
+
+    # Decides for the rotation tactic
     def getTreeBalanced(self, node):
         balance = node.getBalance()
         if balance > 1:
@@ -42,6 +140,7 @@ class AVLTree:
             if node.rightChild.getBalance() > 0:
                 node.rightChild = self.rightRotate(node.rightChild)
             return self.leftRotate(node)
+        return node
 
 
     def leftRotate(self, node):
@@ -69,57 +168,68 @@ class AVLTree:
         if x: x.updateHeight()
         return x
 
-
+    # Returns the path from root to the node that contains data
+    # or if data not in node, the last explored leaf
     def searchPath(self, data):
         if not self.root:
-            return []
+            return None
         path = []
         curNode = self.root
-        while(curNode):
+        while curNode:
             path.append(curNode)
-            if(data < curNode.data):
+            if data < curNode.data:
                 curNode = curNode.leftChild
-            elif(data > curNode.data):
+            elif data > curNode.data:
                 curNode = curNode.rightChild
             else:
                 break
         return path
 
-
+    # Returns the inorder successor of the node that contains data
     def getSuccessor(self, data):
         path = self.searchPath(data)
         if not path:
+            # If there is no path there is no root to start from
             return None
         i = len(path) - 1
         if path[i].rightChild:
+            # path[i] is the node that either contains data or is the leaf closest to data
+            # thus if there is a right child you should return it's leftmost leaf as the successor
             succ = path[i].rightChild
             while succ.leftChild:
                 succ = succ.leftChild
             return succ
         elif len(path) > 1:
+            # path[i] has no rightChild - the successor (if one) is the first parent,
+            # found in the path from the node, that contains data, to the root, whose leftChild
+            # is in searchPath
             while i > 0:
                 if path[i-1].data > path[i].data:
                     return path[i-1]
                 i -= 1
+        # If there is no node with data greater than data
         return None
 
-
-    def getPredeccessor(self, data):
+    # Returns the inorder predecessor of the node that contains data
+    def getPredecessor(self, data):
         path = self.searchPath(data)
         if not path:
+            # No path -> there is no root
             return None
         i = len(path) - 1
         if path[i].leftChild:
+            # Get the rightmost leaf of the subtree with root nodes leftChild
             pred = path[i].leftChild
             while pred.rightChild:
                 pred = pred.rightChild
             return pred
         while path[i].data < path[i-1].data:
+            # Get the first parent that has path as part of it's rightChild
             i -= 1
-            if i == 0: return None
+            if i == 0: return None # There is no such node in the path
         return path[i-1]
 
-
+    # Returs the inorder traversal of the tree as a list (it is obviously sorted)
     def inOrder(self):
         inOrderList = []
         path = []
@@ -138,7 +248,7 @@ class AVLTree:
 
         return inOrderList
 
-
+    # Prints the inorder traversal (does not return the list)
     def inOrderPrint(self):
         path = []
         curNode = self.root
@@ -149,7 +259,7 @@ class AVLTree:
                 curNode = curNode.leftChild
             elif path:
                 curNode = path.pop()
-                print("Value: " + curNode.data.point.toString() + ", Height: " + str(curNode.height))
+                print("Value: " + str(curNode.data) + ", Height: " + str(curNode.height))
                 curNode = curNode.rightChild
             else:
                 break

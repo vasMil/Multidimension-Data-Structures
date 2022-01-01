@@ -28,3 +28,11 @@ class Node:
             return self.leftChild.height
         else:
             return self.leftChild.height - self.rightChild.height
+
+
+    def numOfChildren(self):
+        if self.rightChild and self.leftChild:
+            return 2
+        if not self.rightChild and not self.leftChild:
+            return 0
+        return 1
