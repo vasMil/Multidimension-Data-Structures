@@ -229,7 +229,7 @@ class AVLTree:
             if i == 0: return None # There is no such node in the path
         return path[i-1]
 
-
+    # Deletes node and returns smallest node.data in tree
     def popSmallest(self):
         curNode = self.root
         curMin = self.root
@@ -239,7 +239,7 @@ class AVLTree:
         self.delete(curMin.data)
         return curMin.data
 
-
+    # Deletes node and returns largest node.data in tree
     def popLargest(self):
         curNode = self.root
         curMax = self.root
@@ -248,6 +248,19 @@ class AVLTree:
             curNode = curNode.rightChild
         self.delete(curMax.data)
         return curMax.data
+
+    # Searches for a specific value in the tree, if it finds it, returns the data
+    # else returns None
+    def search(self, data):
+        curNode = self.root
+        while curNode:
+            if curNode.data == data:
+                return curNode.data
+            if data < curNode.data:
+                curNode = curNode.leftChild
+            else:
+                curNode = curNode.rightChild
+        return None
 
 
     # Returs the inorder traversal of the tree as a list (it is obviously sorted)

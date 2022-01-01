@@ -8,17 +8,17 @@ class Segment:
             self.pt2 = pt1
 
     def __gt__(self, other):
-        if(self.getHigherPriorityPoint().x > other.getHigherPriorityPoint().x):
+        if self.getHigherPriorityPoint().x > other.getHigherPriorityPoint().x:
             return True
         return False
 
     def __lt__(self, other):
-        if(self.getHigherPriorityPoint().x < other.getHigherPriorityPoint().x):
+        if self.getHigherPriorityPoint().x < other.getHigherPriorityPoint().x:
             return True
         return False
 
     def __eq__(self, other):
-        if(self.getHigherPriorityPoint().x == other.getHigherPriorityPoint().x):
+        if self.getHigherPriorityPoint().x == other.getHigherPriorityPoint().x:
             return True
         return False
 
