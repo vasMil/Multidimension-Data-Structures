@@ -223,11 +223,14 @@ class AVLTree:
             while pred.rightChild:
                 pred = pred.rightChild
             return pred
-        while path[i].data < path[i-1].data:
+        elif len(path) > 1:
             # Get the first parent that has path as part of it's rightChild
-            i -= 1
-            if i == 0: return None # There is no such node in the path
-        return path[i-1]
+            while i > 0:
+                if not (path[i-1].data > path[i].data): # aka path[i-1] <= path[i] -> Parent (i-1) has child (i) on the right
+                    return path[i-1]
+                i -= 1
+        return None
+
 
     # Deletes node and returns smallest node.data in tree
     def popSmallest(self):

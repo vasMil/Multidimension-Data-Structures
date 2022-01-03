@@ -45,6 +45,24 @@ class TestNode(unittest.TestCase):
         self.node_values.sort()
         self.assertListEqual(self.avl_ready.inOrder(), self.node_values)
 
+    def test_getPredecessor(self):
+        onlyRootTree = AVLTree(10)
+        self.assertEqual(onlyRootTree.getPredecessor(10), None)
+
+        tree2 = AVLTree(2)
+        tree2.insert(1.4); tree2.insert(5); tree2.insert(1.2)
+        self.assertEqual(tree2.getPredecessor(1.2), None)
+
+    def test_getSuccessor(self):
+        onlyRootTree = AVLTree(10)
+        self.assertEquals(onlyRootTree.getSuccessor(10), None)
+
+
+    def test_searchPath(self):
+        searchAVL = AVLTree(10)
+        self.assertEqual(searchAVL.searchPath(10), [searchAVL.root])
+        searchAVL.insert(11)
+        self.assertEqual(searchAVL.searchPath(11), [searchAVL.root, searchAVL.root.rightChild])
 
 if __name__ == '__main__':
     unittest.main()
