@@ -1,4 +1,4 @@
-from avlTree.AVLTree import AVLTree
+from AVLTree.AVLTree import AVLTree
 from model.Event import Event
 from model.Point import Point
 from utils import appendIfNotInList

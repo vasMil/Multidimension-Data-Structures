@@ -1,6 +1,6 @@
 from utils import segmentFactory
 from model.Event import Event
-from avlTree.AVLTree import AVLTree
+from AVLTree.AVLTree import AVLTree
 
 # Debug insert, rebalance, predecessor, successor, inorder traversal
 segments = segmentFactory(0,100,0,100,50, 0)

@@ -1,5 +1,5 @@
 import unittest
-from avlTree.AVLTree import AVLTree
+from AVLTree.AVLTree import AVLTree
 
 class TestNode(unittest.TestCase):
 
@@ -73,7 +73,7 @@ class TestNode(unittest.TestCase):
 
     def test_getSuccessor(self):
         onlyRootTree = AVLTree(10)
-        self.assertEquals(onlyRootTree.getSuccessor(10), None)
+        self.assertEqual(onlyRootTree.getSuccessor(10), None)
 
         succAVL = AVLTree()
         succAVL.insertArray([10,11])
