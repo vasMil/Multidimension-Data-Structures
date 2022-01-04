@@ -29,6 +29,7 @@ class TestNode(unittest.TestCase):
 
     def test_delete(self):
         self.avl_ready.delete(18)
+        # TODO: Nope
         self.assertEqual(self.avl_ready.root.data, 47)
         self.assertEqual(self.avl_ready.root.leftChild.data, 31)
         self.assertEqual(self.avl_ready.root.leftChild.leftChild.data, 25)
@@ -40,6 +41,19 @@ class TestNode(unittest.TestCase):
         self.assertEqual(self.avl_ready.root.rightChild.leftChild.data, 59)
         self.assertEqual(self.avl_ready.root.rightChild.rightChild.data, 88)
         self.assertEqual(self.avl_ready.root.rightChild.rightChild.rightChild.data, 95)
+
+        # Test previous bug: Deleting root, leads to a successor deletion which rotates the root (node to be deleted)
+        # leaving me with no information about the new parent element of the to be deleted node
+        # and thus tree could not be updated.
+        # Solution: do not replace the node, just the data stored in the node (and the children that go with it)
+        berlyBalancedTree = AVLTree()
+        berlyBalancedTree.insertArray([10, 5, 15, 1, 6, 18, 0])
+        berlyBalancedTree.delete(10)
+        # TODO: Implement preorder so if both inorder and preorder are as expected the shape of the tree is also tested!
+        expectInOrder = [0, 1, 5, 6, 15, 18]
+        res = berlyBalancedTree.inOrder()
+        self.assertListEqual(res, expectInOrder)
+
 
     def test_inOrder(self):
         self.node_values.sort()
@@ -53,10 +67,17 @@ class TestNode(unittest.TestCase):
         tree2.insert(1.4); tree2.insert(5); tree2.insert(1.2)
         self.assertEqual(tree2.getPredecessor(1.2), None)
 
+        predAVL = AVLTree()
+        predAVL.insertArray([10,9])
+        self.assertEqual(predAVL.getPredecessorData(10), 9)
+
     def test_getSuccessor(self):
         onlyRootTree = AVLTree(10)
         self.assertEquals(onlyRootTree.getSuccessor(10), None)
 
+        succAVL = AVLTree()
+        succAVL.insertArray([10,11])
+        self.assertEqual(succAVL.getSuccessorData(10), 11)
 
     def test_searchPath(self):
         searchAVL = AVLTree(10)

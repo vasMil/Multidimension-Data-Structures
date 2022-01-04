@@ -58,7 +58,6 @@ class AVLTree:
         # Handle special case of root (has no parent to pop())
         if node == self.root:
             if node.numOfChildren() == 0:
-                if node == self.root:
                     self.root = None
             elif node.numOfChildren() == 1:
                 if node.leftChild:
@@ -68,9 +67,9 @@ class AVLTree:
             else:
                 successor = self.getSuccessor(node.data)
                 self.delete(successor.data)
-                successor.leftChild = self.root.leftChild
-                successor.rightChild = self.root.rightChild
-                self.root = successor
+                successor.leftChild = node.leftChild
+                successor.rightChild = node.rightChild
+                node.data = successor.data
             return
 
 
@@ -127,6 +126,16 @@ class AVLTree:
                 parent.rightChild = self.getTreeBalanced(curNode)
         self.root = self.getTreeBalanced(self.root)
         self.root.updateHeight()
+
+
+    def insertArray(self, dataArray):
+        for data in dataArray:
+            self.insert(data)
+
+
+    def deleteArray(self, dataArray):
+        for data in dataArray:
+            self.delete(data)
 
 
     # Decides for the rotation tactic
@@ -186,11 +195,11 @@ class AVLTree:
         return path
 
     # Returns the inorder successor of the node that contains data
-    def getSuccessor(self, data):
-        path = self.searchPath(data)
-        if not path:
-            # If there is no path there is no root to start from
+    def getSuccessor(self, data, path = None):
+        if not self.root:
             return None
+        if not path:
+            path = self.searchPath(data)
         i = len(path) - 1
         if path[i].rightChild:
             # path[i] is the node that either contains data or is the leaf closest to data
@@ -199,7 +208,7 @@ class AVLTree:
             while succ.leftChild:
                 succ = succ.leftChild
             return succ
-        elif len(path) > 1:
+        if len(path) > 1:
             # path[i] has no rightChild - the successor (if one) is the first parent,
             # found in the path from the node, that contains data, to the root, whose leftChild
             # is in searchPath
@@ -211,25 +220,70 @@ class AVLTree:
         return None
 
     # Returns the inorder predecessor of the node that contains data
-    def getPredecessor(self, data):
-        path = self.searchPath(data)
-        if not path:
-            # No path -> there is no root
+    def getPredecessor(self, data, path = None):
+        if not self.root:
             return None
+        if not path:
+            path = self.searchPath(data)
         i = len(path) - 1
         if path[i].leftChild:
-            # Get the rightmost leaf of the subtree with root nodes leftChild
+            # Get the rightmost leaf of the subtree with root node's leftChild
             pred = path[i].leftChild
             while pred.rightChild:
                 pred = pred.rightChild
             return pred
-        elif len(path) > 1:
+        if len(path) > 1:
             # Get the first parent that has path as part of it's rightChild
             while i > 0:
                 if not (path[i-1].data > path[i].data): # aka path[i-1] <= path[i] -> Parent (i-1) has child (i) on the right
                     return path[i-1]
                 i -= 1
         return None
+
+
+    def getPredecessorData(self, data, path = None):
+        node = self.getPredecessor(data, path)
+        if node: return node.data
+        return None
+
+    def getSuccessorData(self,data, path = None):
+        node = self.getSuccessor(data, path)
+        if node: return node.data
+        return None
+
+
+    def getNextLargestData(self, data):
+        if not self.root:
+            return None
+        path = self.searchPath(data)
+        finalNode = path[len(path) - 1]
+        if finalNode.data == data:
+            return self.getSuccessorData(data, path)
+        # Data not in tree
+        if data < finalNode.data:
+            # Data would be on the leftChild of the final node and thus (since it would be a leaf)
+            # the next largest value is it's parent
+            return finalNode.data
+        # Data would be on the rightChild of the final node and thus it's successor should be the successor of the
+        # final node (since data is NOT in the tree)
+        return self.getSuccessorData(finalNode.data, path)
+
+
+    def getNextSmallestData(self, data):
+        if not self.root:
+            return None
+        path = self.searchPath(data)
+        finalNode = path[len(path) - 1]
+        if finalNode.data == data:
+            return self.getPredecessorData(data, path)
+        # Data not in tree
+        if data < finalNode.data:
+            # Data would be on the leftChild of the final node and thus (since it would be a leaf)
+            # thus it's predecessor would be the current predecessor of finalNode
+            return self.getPredecessorData(finalNode.data, path)
+        # Data would be on the rightChild of the final node and thus it's predecessor should be it's the parent
+        # (since it would be a leaf)
+        return finalNode.data
 
 
     # Deletes node and returns smallest node.data in tree
