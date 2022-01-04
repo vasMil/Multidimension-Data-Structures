@@ -1,40 +1,86 @@
 from avlTree.AVLTree import AVLTree
 from model.Event import Event
 from model.Point import Point
-
+from utils import appendIfNotInList
 
 def segmentIntersection(segments):
     statusTree = AVLTree()
     eventTree = AVLTree()
+    intersPoints = []
 
     for segment in segments:
-        registerEventInTree(eventTree, Event(segment.pt1), True, segment)
-        registerEventInTree(eventTree, Event(segment.pt2), False, segment)
+        registerEventInTree(eventTree, Event(segment.pt1), [segment])
+        registerEventInTree(eventTree, Event(segment.pt2), [segment])
 
-    while eventTree:
+    while eventTree.root:
         event = eventTree.popLargest()
-        handleEvent(event, eventTree, statusTree)
+        handleEvent(event, eventTree, statusTree, intersPoints)
+    return intersPoints
 
 
-def handleEvent(event, eventTree, statusTree):
-    pass
+def handleEvent(event, eventTree, statusTree, logger):
+    if len(event.lowerPointArr) + len(event.upperPointArr) + len(event.liesInsideArr) > 1:
+        logger.append(event.point)
+    statusTree.deleteArray(event.lowerPointArr + event.liesInsideArr)
+    for segment in event.liesInsideArr:
+        segment.updateComparissonData(event.point.y, event.point.x)
+    statusTree.insertArray(event.upperPointArr + event.liesInsideArr)
+    if len(event.upperPointArr) + len(event.liesInsideArr) == 0:
+        curSegment = event.lowerPointArr[0]
+        pred = statusTree.getNextSmallestData(curSegment)
+        succ = statusTree.getNextLargestData(curSegment)
+        if pred and succ: findNewIntersection(pred, succ, event, eventTree)
+    else:
+        upperUinside = event.upperPointArr + event.liesInsideArr
+        upperUinside.sort()
+        s = upperUinside[0]
+        sl = statusTree.getNextSmallestData(s)
+        if sl: findNewIntersection(s,sl,event,eventTree, logger)
+        s = upperUinside[len(upperUinside) - 1]
+        sr = statusTree.getNextLargestData(s)
+        if sr: findNewIntersection(s,sr,event,eventTree, logger)
+
+
+def findNewIntersection(segment1, segment2, event, eventTree, logger=None):
+    points = getIntersectionPoints(segment1, segment2)
+    for point in points:
+        if isNewIntersection(point, event):
+            registerEventInTree(eventTree, Event(point), [segment1, segment2])
+        # TODO: Check if the statement below is correct, since it is your addition
+        # Required so I can detect and report the intersection point between
+        # pt15 = Point(2,1); pt16 = Point(2,0); s8 = Segment(pt15,pt16)
+        # pt17 = Point(2,0.4); pt18 = Point(1,0.3); s9 = Segment(pt17,pt18)
+        elif event.point == point and segment1.includes(point) and segment2.includes(point) and logger != None:
+            appendIfNotInList(logger, point)
+
+
+# If it is above the sweep line on it and on the right of the event then it is new
+def isNewIntersection(intersectionPoint, event):
+    if intersectionPoint < event.point:
+        return True
+    return False
 
 
 # Insert event in tree.
 # If the event already exists append the segment in the correct list
-def registerEventInTree(tree, event, is_upper, segment):
+def registerEventInTree(tree, event, segments):
     registeredEvent = tree.search(event)
     if registeredEvent:
-        if is_upper:
-            registeredEvent.upperPointArr.append(segment)
-        else:
-            registeredEvent.lowerPointArr.append(segment)
+        for segment in segments:
+            updateEventArrays(registeredEvent, segment)
         return
-    if is_upper:
-        event.upperPointArr.append(segment)
-    else:
-        event.lowerPointArr.append(segment)
+    for segment in segments:
+        updateEventArrays(event, segment)
     tree.insert(event)
+
+
+def updateEventArrays(event, segment):
+    if event.point == segment.pt1:
+        appendIfNotInList(event.upperPointArr, segment)
+    elif event.point == segment.pt2:
+        appendIfNotInList(event.lowerPointArr, segment)
+    else:
+        appendIfNotInList(event.liesInsideArr, segment)
 
 
 # Counter-clockwise: -1
@@ -42,7 +88,7 @@ def registerEventInTree(tree, event, is_upper, segment):
 # Clockwise: 1
 def orientation(segment, point):
     a = segment.pt1; b = segment.pt2; c = point
-    crossProd = (b.x - c.x)*(a.y - c.y) - (b.y - c.y)*(a.y-c.y)
+    crossProd = (b.x - c.x)*(a.y - c.y) - (a.x - c.x)*(b.y-c.y)
     if crossProd < 0:
         return -1
     elif crossProd == 0:
@@ -54,7 +100,7 @@ def orientation(segment, point):
 # If there is one it uses getInstersectionPoint to find it and returns it inside a list
 # If there in not one returns an empty list
 # In the case that two segments overlap return both those endpoints that are inside another segment
-def getIntersectionPoints_ifExist(segment1, segment2):
+def getIntersectionPoints(segment1, segment2):
     orient12_1 = orientation(segment1, segment2.pt1)
     orient12_2 = orientation(segment1, segment2.pt2)
     if orient12_1 == orient12_2:

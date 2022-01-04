@@ -69,6 +69,7 @@ class AVLTree:
                 self.delete(successor.data)
                 successor.leftChild = node.leftChild
                 successor.rightChild = node.rightChild
+                node.updateHeight()
                 node.data = successor.data
             return
 

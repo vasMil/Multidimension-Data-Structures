@@ -14,3 +14,9 @@ def segmentFactory(minx,maxx,miny,maxy, numOfSegments, round_n_digits = 2):
                               round(random.uniform(miny,maxy),round_n_digits))
         segments[i] = Segment(pt[0], pt[1])
     return segments
+
+
+def appendIfNotInList(list, data):
+    if data in list:
+        return
+    list.append(data)
