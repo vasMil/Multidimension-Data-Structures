@@ -192,6 +192,8 @@ class AVLTree:
             elif data > curNode.data:
                 curNode = curNode.rightChild
             else:
+                if curNode.rightChild and curNode.rightChild.data == data:
+                    path.append(curNode.rightChild)
                 break
         return path
 

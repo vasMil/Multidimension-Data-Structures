@@ -21,27 +21,36 @@ def segmentIntersection(segments):
 def handleEvent(event, eventTree, statusTree, logger):
     if len(event.lowerPointArr) + len(event.upperPointArr) + len(event.liesInsideArr) > 1:
         logger.append(event.point)
-    statusTree.deleteArray(event.lowerPointArr + event.liesInsideArr)
-    for segment in event.liesInsideArr:
-        segment.updateComparissonData(event.point.y, event.point.x)
-    statusTree.insertArray(event.upperPointArr + event.liesInsideArr)
+    statusTree.deleteArray(event.lowerPointArr)
+    updateCompDataInStatusTree(statusTree, event.liesInsideArr, event)
+    statusTree.insertArray(event.upperPointArr)
     if len(event.upperPointArr) + len(event.liesInsideArr) == 0:
         curSegment = event.lowerPointArr[0]
         pred = statusTree.getNextSmallestData(curSegment)
         succ = statusTree.getNextLargestData(curSegment)
-        if pred and succ: findNewIntersection(pred, succ, event, eventTree)
+        if pred and succ: findNewIntersection(pred, succ, event, eventTree, logger)
     else:
         upperUinside = event.upperPointArr + event.liesInsideArr
         upperUinside.sort()
         s = upperUinside[0]
         sl = statusTree.getNextSmallestData(s)
         if sl: findNewIntersection(s,sl,event,eventTree, logger)
-        s = upperUinside[len(upperUinside) - 1]
+        s = upperUinside[-1]
         sr = statusTree.getNextLargestData(s)
-        if sr: findNewIntersection(s,sr,event,eventTree, logger)
+        if sr: findNewIntersection(s, sr, event, eventTree, logger)
 
 
-def findNewIntersection(segment1, segment2, event, eventTree, logger=None):
+def updateCompDataInStatusTree(statusTree, segments, event):
+    for segment in segments:
+        statusTree.delete(segment)
+    for segment in segments:
+        segment.updateComparissonData(event.point.y, event.point.x)
+    for segment in segments:
+        statusTree.insert(segment)
+    return
+
+
+def findNewIntersection(segment1, segment2, event, eventTree, logger):
     points = getIntersectionPoints(segment1, segment2)
     for point in points:
         if isNewIntersection(point, event):
@@ -50,13 +59,13 @@ def findNewIntersection(segment1, segment2, event, eventTree, logger=None):
         # Required so I can detect and report the intersection point between
         # pt15 = Point(2,1); pt16 = Point(2,0); s8 = Segment(pt15,pt16)
         # pt17 = Point(2,0.4); pt18 = Point(1,0.3); s9 = Segment(pt17,pt18)
-        elif event.point == point and segment1.includes(point) and segment2.includes(point) and logger != None:
-            appendIfNotInList(logger, point)
+        elif event.point == point and segment1.includes(point) and segment2.includes(point):
+            appendIfNotInList(logger, event.point)
 
 
 # If it is above the sweep line on it and on the right of the event then it is new
 def isNewIntersection(intersectionPoint, event):
-    if intersectionPoint < event.point:
+    if intersectionPoint.y < event.point.y or (intersectionPoint.y == event.point.y and intersectionPoint.x > event.point.x):
         return True
     return False
 

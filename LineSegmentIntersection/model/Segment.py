@@ -1,4 +1,5 @@
 from env.constants import MINIMUM_DISTANCE_FROM_ZERO as eps
+from model.Point import Point
 import math
 
 class Segment:
@@ -12,28 +13,28 @@ class Segment:
         self.compData = self.pt1.x
 
     def __gt__(self, other):
-        if self.compData > other.compData:
+        if self.compData < other.compData:
             return True
         self_angle = self.getAngle()
         other_angle = other.getAngle()
         if self.compData == other.compData and self_angle > other_angle:
             return True
-        if self.compData == other.compData and self_angle == other_angle and self.pt2 < other.pt2:
+        if self.compData == other.compData and self_angle == other_angle and self.pt2.x > other.pt2.x:
             return True
-        if self.compData == other.compData and self_angle == other_angle and self.pt2 == other.pt2 and self.pt1 > other.pt1:
+        if self.compData == other.compData and self_angle == other_angle and self.pt2.x == other.pt2.x and self.pt1 > other.pt1:
             return True
         return False
 
     def __lt__(self, other):
-        if self.compData < other.compData:
+        if self.compData > other.compData:
             return True
         self_angle = self.getAngle()
         other_angle = other.getAngle()
         if self.compData == other.compData and self_angle < other_angle:
             return True
-        if self.compData == other.compData and self_angle == other_angle and self.pt2 > other.pt2:
+        if self.compData == other.compData and self_angle == other_angle and self.pt2.x > other.pt2.x:
             return True
-        if self.compData == other.compData and self_angle == other_angle and self.pt2 == other.pt2 and self.pt1 < other.pt1:
+        if self.compData == other.compData and self_angle == other_angle and self.pt2.x == other.pt2.x and self.pt1 < other.pt1:
             return True
         return False
 
@@ -50,28 +51,29 @@ class Segment:
     # so you may "swap" the segments that intersect, inside the status tree T.
     def updateComparissonData(self, sweep_line_y, last_x_checked_by_sweep_line):
         yl_eps = sweep_line_y - eps
-        if yl_eps <= self.pt2.y:
-            # Since eps is the smallest value I may represent (defined in env), there cannot be a point between
-            # sweep_line_y and sweep_line_y - eps
-            # Thus I may use the the x value of the current event point + eps
-            # as compData - if that value is out of the segment, use the x coordinate of the furthest point
-            # on the segment.
-            # - Chose this so I may detect intersections that are caused by overlaps like ---o---x---o---b---b---x---
-            # - Watch segments s1,s2,s3 on Test3 for segmentIntersection
-            self.compData = last_x_checked_by_sweep_line + eps
-            maxx = max(self.pt1.x, self.pt2.x)
-            if self.compData > maxx: self.compData = maxx
-            return
+        # Since eps is the smallest value I may represent (defined in env), x(sweep_line_y - eps) is part of the
+        # segment.
         xdif = self.pt2.x - self.pt1.x
         ydif = self.pt2.y - self.pt1.y
-        if not ydif:
+        if ydif:
+            self.compData = ((yl_eps - self.pt1.y)*xdif) / ydif + self.pt1.x
             return
-        self.compData = ((yl_eps - self.pt1.y)*xdif) / ydif + self.pt1.x
+        # If ydif == 0 -> The segment is horizontal
+        # Thus I may use the the x value of the current event point + eps as compData.
+        # I know for sure it is inside the segment since function is only evaluated when an event point lies inside
+        # this (self) segment
+        # - Chose this so I may detect intersections that are caused by overlaps like ---o---x---o---b---b---x---
+        # - Watch segments s1,s2,s3 on Test3 for segmentIntersection
+        self.compData = last_x_checked_by_sweep_line + eps
+        return
+
 
 
     def includes(self, point):
         if self.pt1.x == self.pt2.x:
-            if self.pt1.y >= point.y and self.pt2.y <= point.y: return True
+            if self.pt1.y >= point.y and self.pt2.y <= point.y:
+                return True
+            return False
         m = (self.pt2.y - self.pt1.y) / (self.pt2.x - self.pt1.x)
         b = self.pt1.y - m*self.pt1.x
         y = m*point.x +b
@@ -85,10 +87,10 @@ class Segment:
 
 
     def getSlope(self):
-        xdif = self.pt2.x - self.pt2.x
+        xdif = self.pt2.x - self.pt1.x
         if not xdif:
             return math.inf
-        return (self.pt2.y - self.pt2.y) / xdif
+        return (self.pt2.y - self.pt1.y) / xdif
 
 
     def toString(self):
