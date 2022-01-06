@@ -43,10 +43,10 @@ class TestIntersection(unittest.TestCase):
         pt15 = Point(54,-54.5); pt16 = Point(56.5,-54.5); s8 = Segment(pt15,pt16)
 
         expectedPoints = [Point(55,-51.3333333), Point(50,-52), Point(52,-52), Point(55,-52), Point(60,-52),
-                          Point(55,-54), Point(55,-55), Point(55,-54.5)]
+                          Point(55,-54.5)]
         expectedPoints.sort()
 
-        results = segmentIntersection.segmentIntersection([s1,s2,s3,s4,s5,s6,s7,s8])
+        results = segmentIntersection.segmentIntersection([s1,s2,s3,s4,s5,s7])
         results.sort()
 
         for i in range(0,len(expectedPoints)):
@@ -71,7 +71,7 @@ class TestIntersection(unittest.TestCase):
                           Point(-5,-3.5), Point(-5,-4), Point(-5,-2), Point(4,4), Point(5,5), Point(2,2), Point(0,0)]
         expectedPoints.sort()
 
-        results = segmentIntersection.segmentIntersection([s1,s2,s3,s3,s4,s5,s5,s6,s7,s8,s9])
+        results = segmentIntersection.segmentIntersection([s1,s2,s3,s4,s5,s6,s7,s8,s9])
         results.sort()
 
         for i in range(0,len(expectedPoints)):

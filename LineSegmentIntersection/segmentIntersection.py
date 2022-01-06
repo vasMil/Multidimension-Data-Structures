@@ -22,8 +22,9 @@ def handleEvent(event, eventTree, statusTree, logger):
     if len(event.lowerPointArr) + len(event.upperPointArr) + len(event.liesInsideArr) > 1:
         logger.append(event.point)
     statusTree.deleteArray(event.lowerPointArr)
-    updateCompDataInStatusTree(statusTree, event.liesInsideArr, event)
-    soft_updateCompData(statusTree.inOrder(), event)
+    if event.liesInsideArr:
+        updateCompDataInStatusTree(statusTree, event.liesInsideArr, event)
+    soft_updateCompData(statusTree.inOrder() + event.lowerPointArr, event)
     statusTree.insertArray(event.upperPointArr)
     if len(event.upperPointArr) + len(event.liesInsideArr) == 0:
         curSegment = event.lowerPointArr[0]
@@ -44,6 +45,7 @@ def handleEvent(event, eventTree, statusTree, logger):
 def updateCompDataInStatusTree(statusTree, segments, event):
     for segment in segments:
         statusTree.delete(segment)
+    soft_updateCompData(statusTree.inOrder(), event)
     for segment in segments:
         segment.updateComparissonData(event.point.y, event.point.x)
     for segment in segments:

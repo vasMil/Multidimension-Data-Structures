@@ -1,5 +1,6 @@
 import random
 import time
+from env.constants import RANGE_OF_POINTS_LIMIT, RANGE_SIZE, NUM_OF_SEGMENTS
 from model.Point import Point
 from model.Segment import Segment
 
@@ -18,7 +19,8 @@ def saveSegments(segments):
 
 def getSegments(filename = None):
     if not filename:
-        return segmentFactory(-50, 50, -50, 50, 10, 0)
+        return segmentFactory(-RANGE_OF_POINTS_LIMIT, RANGE_OF_POINTS_LIMIT,
+                              -RANGE_OF_POINTS_LIMIT, RANGE_OF_POINTS_LIMIT, NUM_OF_SEGMENTS, 0)
     dbfile = open(filename, 'rb')
     segments = pickle.load(dbfile)
     dbfile.close()
@@ -81,8 +83,8 @@ def drawResults(segments, intersectionPoints, windowTitle):
         gl.glEnable(gl.GL_BLEND)
         gl.glBegin(gl.GL_LINES)
         for segment in segments:
-            gl.glVertex2f(segment.pt1.x/50, segment.pt1.y/50)
-            gl.glVertex2f(segment.pt2.x/50, segment.pt2.y/50)
+            gl.glVertex2f(segment.pt1.x/RANGE_SIZE, segment.pt1.y/RANGE_SIZE)
+            gl.glVertex2f(segment.pt2.x/RANGE_SIZE, segment.pt2.y/RANGE_SIZE)
         gl.glEnd()
 
         gl.glPointSize(15.0)
@@ -91,7 +93,7 @@ def drawResults(segments, intersectionPoints, windowTitle):
 
         gl.glBegin(gl.GL_POINTS)
         for point in intersectionPoints:
-            gl.glVertex2f(point.x/50,point.y/50)
+            gl.glVertex2f(point.x/RANGE_SIZE,point.y/RANGE_SIZE)
         gl.glEnd()
 
         gl.glFlush()

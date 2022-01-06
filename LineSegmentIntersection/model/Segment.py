@@ -1,5 +1,4 @@
 from env.constants import MINIMUM_DISTANCE_FROM_ZERO as eps
-from model.Point import Point
 import math
 
 class Segment:
@@ -15,28 +14,45 @@ class Segment:
     def __gt__(self, other):
         if self.compData < other.compData:
             return True
+        elif self.compData > other.compData:
+            return False
+        # self.compData == other.compData
         self_angle = self.getAngle()
         other_angle = other.getAngle()
-        if self.compData == other.compData and self_angle > other_angle:
-            return True
-        if self.compData == other.compData and self_angle == other_angle and self.pt2.x < other.pt2.x:
-            return True
-        if self.compData == other.compData and self_angle == other_angle and self.pt2.x == other.pt2.x and self.pt1.x > other.pt1.x:
-            return True
-        return False
+        if self_angle * other_angle > 0:
+            # Angles have the same sign
+            if self_angle < other_angle: return True
+            elif self_angle > other_angle: return False
+        elif self_angle == 0 and  other_angle == 0:
+            # O OR O OR O OR OX
+            # |    |    |    |
+            # X    X    X    |
+            # |    |    |    |
+            # X    O    |    |
+            # |    |    |    |
+            # O    X    OX   OX
+            if self.pt2.y < other.pt2.y: return True
+            elif self.pt2.y > other.pt2.y: return False
+            elif self.pt1.y < other.pt1.y: return False
+            elif self.pt1.y > other.pt1.y: return True
+            else: return False # Segments are identical
+        elif self_angle == 0:
+            if self.pt1 < other.pt1: return False
+            else: return True
+        elif other_angle == 0:
+            if self.pt1 > other.pt1:
+                return True
+            else:
+                return False
+        else:
+            # Angles have different signs
+            if self_angle < 0: return False
+            else: return True
 
     def __lt__(self, other):
-        if self.compData > other.compData:
-            return True
-        self_angle = self.getAngle()
-        other_angle = other.getAngle()
-        if self.compData == other.compData and self_angle < other_angle:
-            return True
-        if self.compData == other.compData and self_angle == other_angle and self.pt2.x > other.pt2.x:
-            return True
-        if self.compData == other.compData and self_angle == other_angle and self.pt2.x == other.pt2.x and self.pt1.x < other.pt1.x:
-            return True
-        return False
+        if self > other or self == other:
+            return False
+        return True
 
     def __eq__(self, other):
         if self.pt1 == other.pt1 and self.pt2 == other.pt2:
