@@ -1,34 +1,47 @@
+import utils
 from segmentIntersection import segmentIntersection, getIntersectionPoints
-from utils import segmentFactory, drawResults, saveSegments, getSegments
-from model.Event import Event
-from AVLTree.AVLTree import AVLTree
-from utils import appendIfNotInList
 
-segments = getSegments()
-Q = AVLTree()
-for i in range(0,len(segments)):
-    Q.insert(Event(segments[i].pt1))
-    Q.insert(Event(segments[i].pt2))
+while True:
+    segments = utils.getSegments()
+    intersectionPoints = segmentIntersection(segments)
 
-intersectionPoints = segmentIntersection(segments)
+    bruteForce = []
+    for segment1 in segments:
+        for segment2 in segments:
+            if segment1 == segment2:
+                break
+            for temp in getIntersectionPoints(segment1,segment2):
+                utils.appendIfNotInList(bruteForce, temp)
 
-saveSegments(segments)
+    bruteForce.sort()
+    intersectionPoints.sort()
+    if bruteForce != intersectionPoints:
+        break
 
-bruteForce = []
-for segment1 in segments:
-    for segment2 in segments:
-        if segment1 == segment2:
-            break
-        for temp in getIntersectionPoints(segment1,segment2):
-            appendIfNotInList(bruteForce, temp)
-
-bruteForce.sort()
-intersectionPoints.sort()
 
 if bruteForce != intersectionPoints:
     print("You did not find all intersection points")
-    print(f'Brute Force: Found {len(bruteForce)} intersections!')
-    print(f'Sweepline: Found {len(intersectionPoints)} intersections!')
+    utils.saveSegments(segments)
 
-drawResults(segments, intersectionPoints, "Sweep Line")
-drawResults(segments, bruteForce, "Brute Force")
+    print("\n SEGMENTS \n")
+    for segment in segments:
+        segment.print()
+
+    print("\n INTERSECTION POINTS \n")
+    for point in bruteForce:
+        point.print()
+
+    utils.drawResults(segments, bruteForce, "Brute Force")
+
+print(f'Brute Force: Found {len(bruteForce)} intersections!')
+print(f'Sweepline: Found {len(intersectionPoints)} intersections!')
+
+utils.drawResults(segments, intersectionPoints, "Sweep Line")
+
+for segment1 in segments:
+    for segment2 in segments:
+        count = 0
+        if segment1 == segment2:
+            count += 1
+        if count == 2:
+            raise "There are two identical segments"

@@ -19,9 +19,9 @@ class Segment:
         other_angle = other.getAngle()
         if self.compData == other.compData and self_angle > other_angle:
             return True
-        if self.compData == other.compData and self_angle == other_angle and self.pt2.x > other.pt2.x:
+        if self.compData == other.compData and self_angle == other_angle and self.pt2.x < other.pt2.x:
             return True
-        if self.compData == other.compData and self_angle == other_angle and self.pt2.x == other.pt2.x and self.pt1 > other.pt1:
+        if self.compData == other.compData and self_angle == other_angle and self.pt2.x == other.pt2.x and self.pt1.x > other.pt1.x:
             return True
         return False
 
@@ -34,7 +34,7 @@ class Segment:
             return True
         if self.compData == other.compData and self_angle == other_angle and self.pt2.x > other.pt2.x:
             return True
-        if self.compData == other.compData and self_angle == other_angle and self.pt2.x == other.pt2.x and self.pt1 < other.pt1:
+        if self.compData == other.compData and self_angle == other_angle and self.pt2.x == other.pt2.x and self.pt1.x < other.pt1.x:
             return True
         return False
 

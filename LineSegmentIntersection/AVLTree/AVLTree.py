@@ -55,10 +55,11 @@ class AVLTree:
             # Could not find data
             return
 
+        successor = None
         # Handle special case of root (has no parent to pop())
         if node == self.root:
             if node.numOfChildren() == 0:
-                    self.root = None
+                self.root = None
             elif node.numOfChildren() == 1:
                 if node.leftChild:
                     self.root = node.leftChild
@@ -67,8 +68,6 @@ class AVLTree:
             else:
                 successor = self.getSuccessor(node.data)
                 self.delete(successor.data)
-                successor.leftChild = node.leftChild
-                successor.rightChild = node.rightChild
                 node.updateHeight()
                 node.data = successor.data
             return
@@ -102,19 +101,14 @@ class AVLTree:
                     parent.rightChild = node.leftChild
 
         else:
-            # Successor is the leftmost leaf of node's right child
             successor = self.getSuccessor(node.data)
             self.delete(successor.data)
-            # Reattach node's left and right branches
-            successor.leftChild = node.leftChild
-            successor.rightChild = node.rightChild
-            if node.data < parent.data:
-                parent.leftChild = successor
-            else:
-                parent.rightChild = successor
+            node.data = successor.data
             successor.updateHeight()
 
 
+        if successor:
+            return
         # Rebalance path to root - same for all cases
         curNode = parent
         while path:
@@ -192,8 +186,6 @@ class AVLTree:
             elif data > curNode.data:
                 curNode = curNode.rightChild
             else:
-                if curNode.rightChild and curNode.rightChild.data == data:
-                    path.append(curNode.rightChild)
                 break
         return path
 

@@ -23,6 +23,7 @@ def handleEvent(event, eventTree, statusTree, logger):
         logger.append(event.point)
     statusTree.deleteArray(event.lowerPointArr)
     updateCompDataInStatusTree(statusTree, event.liesInsideArr, event)
+    soft_updateCompData(statusTree.inOrder(), event)
     statusTree.insertArray(event.upperPointArr)
     if len(event.upperPointArr) + len(event.liesInsideArr) == 0:
         curSegment = event.lowerPointArr[0]
@@ -49,6 +50,9 @@ def updateCompDataInStatusTree(statusTree, segments, event):
         statusTree.insert(segment)
     return
 
+def soft_updateCompData(segments, event):
+    for segment in segments:
+        segment.updateComparissonData(event.point.y, event.point.x)
 
 def findNewIntersection(segment1, segment2, event, eventTree, logger):
     points = getIntersectionPoints(segment1, segment2)

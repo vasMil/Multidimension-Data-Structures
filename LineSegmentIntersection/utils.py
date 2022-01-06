@@ -1,7 +1,7 @@
 import random
+import time
 from model.Point import Point
 from model.Segment import Segment
-import time
 
 import sys
 import OpenGL.GL as gl
@@ -18,7 +18,7 @@ def saveSegments(segments):
 
 def getSegments(filename = None):
     if not filename:
-        return segmentFactory(-50, 50, -50, 50, 15, 0)
+        return segmentFactory(-50, 50, -50, 50, 10, 0)
     dbfile = open(filename, 'rb')
     segments = pickle.load(dbfile)
     dbfile.close()
@@ -31,7 +31,6 @@ def getSegments(filename = None):
 
 def segmentFactory(minx,maxx,miny,maxy, numOfSegments, round_n_digits = 2):
     segments = [Segment(Point(0,0),Point(0,0))] * numOfSegments
-    yUsed = []
     for i in range(0, numOfSegments):
         pt = [Point(0,0)]*2
         for j in range(0,2):
