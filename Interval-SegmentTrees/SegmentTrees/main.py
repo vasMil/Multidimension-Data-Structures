@@ -4,6 +4,7 @@
 #
 # the nodes when i print them will be presented like that [intervalStart, intervalEnd, Max].
 import random
+import time
 
 
 class Node:
@@ -120,30 +121,34 @@ class SegmentTree:
                     root_node.Max = root_node.left_child.Max
 
 
-def test():
-    t_root = Node([5, 10])
-    st = SegmentTree(t_root)
-    st.addition(Node([15, 25]))
-    st.addition(Node([1, 12]))
-    st.addition(Node([8, 16]))
-    st.addition(Node([14, 20]))
-    st.addition(Node([18, 21]))
-    st.addition(Node([2, 8]))
-    st.maxes(t_root)
-    st.print_tree(t_root)
-    st.search_for_overlaps(t_root, 2)
+# def test():
+#     t_root = Node([5, 10])
+#     st = SegmentTree(t_root)
+#     st.addition(Node([15, 25]))
+#     st.addition(Node([1, 12]))
+#     st.addition(Node([8, 16]))
+#     st.addition(Node([14, 20]))
+#     st.addition(Node([18, 21]))
+#     st.addition(Node([2, 8]))
+#     st.maxes(t_root)
+#     st.print_tree(t_root)
+#     st.search_for_overlaps(t_root, 2)
 
 
 def build_tree():
     t_root = Node([5, 10])
     It = SegmentTree(t_root)
-    for i in range(100):
+    for i in range(10000):
         start_p = random.randint(0, 100)
         end_p = random.randint(start_p + 10, start_p + 100)
         It.addition(Node([start_p, end_p]))
     It.maxes(t_root)
     It.print_tree(t_root)
     print("---overlaps-->")
+    ns2 = time.time_ns()
     It.search_for_overlaps(t_root, 2)
+    ns3 = time.time_ns()
+    print("time for searching", ns3 - ns2)
+
 
 build_tree()

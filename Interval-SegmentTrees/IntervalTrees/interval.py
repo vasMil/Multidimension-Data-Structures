@@ -3,7 +3,9 @@
 # two fixed points A and B, where A and B themselves are considered not to belong to the interval).
 #
 # the nodes when i print them will be presented like that [intervalStart, intervalEnd, Max].
+
 import random
+import time
 
 
 class Node:
@@ -138,14 +140,18 @@ def test():
 def build_tree():
     t_root = Node([5, 10])
     It = IntervalTree(t_root)
-    for i in range(100):
+    for i in range(10000):
         start_p = random.randint(0, 30)
         end_p = random.randint(start_p + 10, start_p + 40)
         It.addition(Node([start_p, end_p]))
     It.maxes(t_root)
     It.print_tree(t_root)
     print("---overlaps-->")
+    ns2 = time.time_ns()
     It.search_for_overlaps(t_root, [0, 3])
+    ns3 = time.time_ns()
+    print("time for searching", ns3 - ns2)
+
 
 
 build_tree()
