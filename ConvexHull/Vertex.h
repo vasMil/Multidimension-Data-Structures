@@ -7,6 +7,7 @@ class Vertex {
         
     public:
         Vertex(double x, double y);
+        Vertex(std::pair<double, double> p);
         void print();
 
         double getX();

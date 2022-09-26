@@ -5,6 +5,11 @@ Vertex::Vertex(double x, double y) {
     this->y = y;
 }
 
+Vertex::Vertex(std::pair<double, double> p) {
+    this->x = p.first;
+    this->y = p.second;
+}
+
 void Vertex::print() {
     std::cout << "x = " << this->x << "; y = " << this->y << ";\n";
 }

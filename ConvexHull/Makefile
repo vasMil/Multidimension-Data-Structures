@@ -11,5 +11,8 @@ all: ConvexHull
 ConvexHull: ConvexHull.cpp 
 			$(CC) $(CFLAGS) -o ConvexHull ConvexHull.cpp Utils.cpp Vertex.cpp tests/test.cpp OpenGL/opengl.cpp -lGL -lglfw
 
+run:
+	./ConvexHull
+
 clean:
 			rm ConvexHull; clear

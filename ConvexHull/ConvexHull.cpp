@@ -58,6 +58,7 @@ int main(int argc, char* argv[]) {
 
 #if DRAW || DRAW_STEPS
     // OpenGL TERMINATE
+    opengl::drawGraph(window, randomVertices, stack, 1);
     opengl::terminateOpenGL(window);
 #endif
 

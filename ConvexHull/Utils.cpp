@@ -77,12 +77,13 @@ int Utils::getMinYVertex(std::vector<Vertex>* vec) {
 std::vector<Vertex>* Utils::VertexFactory(int numOfVertices, double upperx, double lowerx, double uppery, double lowery) {
     std::vector<Vertex>* randomVertices = (std::vector<Vertex>*)malloc(numOfVertices*sizeof(Vertex));
     for (int i = 0; i < numOfVertices; i++) {
-        randomVertices->push_back(Vertex(Utils::randomDoubleGenerator(upperx, lowerx), Utils::randomDoubleGenerator(uppery, lowery)));
+        randomVertices->push_back(Vertex(Utils::randomPairGenerator<double>(upperx, lowerx)));
     }
     return randomVertices;
 }
 
-double Utils::randomDoubleGenerator(double upper, double lower) {
+template<typename T>
+std::pair<T, T> Utils::randomPairGenerator(T upper, T lower) {
     uint32_t seed_val = 0; // Declare value to store data into
     size_t size = sizeof(seed_val); // Declare size of data
     
@@ -105,8 +106,8 @@ double Utils::randomDoubleGenerator(double upper, double lower) {
 
     std::mt19937 engine; // Mersenne twister MT19937
     engine.seed(seed_val);
-    std::uniform_real_distribution<double> distribution(upper, lower);
+    std::uniform_real_distribution<T> distribution(upper, lower);
     
-    double random = distribution(engine); // Generate sample directly using the distribution and the engine objects.
-    return random;
+    // Generate sample directly using the distribution and the engine objects.
+    return std::make_pair(distribution(engine), distribution(engine));
 }

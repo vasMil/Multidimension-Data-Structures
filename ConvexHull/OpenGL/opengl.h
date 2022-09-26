@@ -8,7 +8,7 @@
 #define X_AXIS 20
 #define Y_AXIS 20
 
-#define SLEEP_INTERVAL_IN_MILLI 500
+#define SLEEP_INTERVAL_IN_MILLI 200
 
 namespace opengl {
     GLFWwindow* initOpenGL();

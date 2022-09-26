@@ -9,7 +9,8 @@
 #include "Vertex.h"
 
 namespace Utils {
-    double randomDoubleGenerator(double upper, double lower);
+    template<typename T>
+    std::pair<T, T> randomPairGenerator(T upper, T lower);
 
     // function that given the number of vertices required
     // will return a vector of pointers to vertices with random x,y.
